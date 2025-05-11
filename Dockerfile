@@ -1,25 +1,24 @@
 FROM n8nio/n8n:latest
 
-# Passe en root pour les installations
 USER root
 
-# Installe les dépendances natives requises pour sharp
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libcairo2-dev \
-    libjpeg-dev \
-    libpango1.0-dev \
-    libgif-dev \
-    librsvg2-dev
+# Installer les dépendances requises pour sharp sur Alpine
+RUN apk add --no-cache \
+  build-base \
+  libc6-compat \
+  cairo-dev \
+  jpeg-dev \
+  pango-dev \
+  giflib-dev \
+  librsvg-dev
 
-# Installe firecrawl-mcp globalement
+# Installer firecrawl (ton module global existant)
 RUN npm install -g firecrawl-mcp
 
-# Installe sharp (local pour le code node)
+# Installer sharp (module local compatible avec n8n)
 RUN npm install --omit=dev sharp
 
-# Active l'import de modules dans le code node
+# Activer les modules dans les nodes Code
 ENV N8N_ENABLE_BUNDLED_CODE_RUNNER=true
 
-# Reviens à l'utilisateur node (sécurité)
 USER node
